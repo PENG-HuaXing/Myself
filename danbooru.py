@@ -26,13 +26,13 @@ def go_to_next_page(bs4):
 	if next_page(bs4):
 		c=bs4.find('a',attrs={'rel':'next'})
 		req=reqs.get(baseurl+c['href'],headers=head)
-		return BeautifulSoup(req.text)
+		return BeautifulSoup(req.text,"lxml")
 	else:
 		return None
 
 def jump_to(parturl):
 	req=reqs.get(baseurl+parturl,headers=head)
-	return BeautifulSoup(req.text)
+	return BeautifulSoup(req.text,"lxml")
 
 def download(bs4):
 	c=bs4.find(id='post-info-size')
@@ -40,7 +40,7 @@ def download(bs4):
 
 
 html=reqs.get(objurl,headers=headers)
-soup=BeautifulSoup(html.text)
+soup=BeautifulSoup(html.text,"lxml")
 name=os.listdir()
 while True:
 
