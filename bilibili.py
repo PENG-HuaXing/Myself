@@ -50,11 +50,10 @@ broswer.get("https://passport.bilibili.com/login")
 
 print("Please longin __ if you have done Please imput \"1\"")
 
-s=input()
-if s=="1":
-    broswer.get("https://space.bilibili.com/36163672/favlist?fid=albumfav")
+s=input()																#确认是否已经登陆成功
+broswer.get("https://space.bilibili.com/36163672/favlist?fid=albumfav")
 
-print("Please clear the window--if you have clean it ,Please input 1")
+print("Please clear the window--if you have clean it ,Please input 1")  #清理当前页面提示
 input()
 thispagelink=[]
 namelist=os.listdir()
