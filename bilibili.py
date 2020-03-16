@@ -1,23 +1,22 @@
 #encoding=utf-8
 
 import requests,os,re,time
-
 from bs4 import BeautifulSoup
 from selenium import webdriver
 
 
 
-def findpost(bs4):
+def findpost(bs4):									#找到当前页面的post标签超链接，并返回一个超链接列表
 	post=bs4.find_all(attrs={"class":"album-card"}) 
 	url=[]
 	for i in post:
-		if "href" not in i.a.attrs:
+		if "href" not in i.a.attrs:					#失效的超链接
 			print("This album is over!!")
 		else:
 			url.append("https:"+i.a["href"])
 	return url
 
-def jump_to_obtain_imglink(url):
+def jump_to_obtain_imglink(url):					#输入post超链接，并进入，搜索图片源链接并返回一个源链接列表
 	broswer.execute_script("window.open()")
 	broswer.switch_to.window(broswer.window_handles[1])
 	broswer.get(url)
@@ -30,9 +29,10 @@ def jump_to_obtain_imglink(url):
 	for i in l:
 		link.append(i["data-photo-imager-src"])
 	return link
-def next_page():
-	ss=broswer.find_elements_by_css_selector(".panigation")
-	count=0
+
+def next_page():												#检查是否存在下一页按钮并click。要注意的是存在中文字符比较，由于selenium返回的是utf8字符
+	ss=broswer.find_elements_by_css_selector(".panigation")		#所以本文汉字编码也必须是utf8格式，否则无法匹配
+	count=0														#另外在跳转页面由于是Ajix技术，所以要等待整体框架加载完成后再获取当前页面源码
 	print("execute next page!!")
 	for i in ss:
 		if i.text=="下一页":
@@ -57,6 +57,7 @@ if s=="1":
 print("Please clear the window--if you have clean it ,Please input 1")
 input()
 thispagelink=[]
+namelist=os.listdir()
 
 while True:
 	soup=BeautifulSoup(broswer.page_source,"lxml")
@@ -67,7 +68,11 @@ while True:
 		thispagelink.append(inner)
 	for i in thispagelink:
 		for j in i:
-			os.system("wget "+j)
+			if j.split("/")[-1] in namelist:
+				print("这个文件已经下载过了！！")
+			else:
+				print("这个文件是第一次下载")
+				os.system("wget "+j)
 	thispagelink=[]
 	if next_page()==1:
 		print("Jump to next page!!!")
