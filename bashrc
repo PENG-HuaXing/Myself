@@ -4,7 +4,8 @@
 #change the PATH 
 export PATH="$PATH:/snap/bin/"
 export TERM="screen-256color"
-
+#geant4软件环境变量
+source /usr/local/geant4.10.06.p01-install/bin/geant4.sh
 
 # If not running interactively, don't do anything
 case $- in
@@ -92,7 +93,7 @@ fi
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
-alias ll='ls -l --color=always'
+alias ll='ls -l'
 alias lt='ls -ctl'
 alias la='ls -A'
 alias l='ls -CF'
@@ -126,3 +127,52 @@ if ! shopt -oq posix; then
 fi
 
 source /usr/local/root/bin/thisroot.sh
+#自己定义的函数:类python函数==================================================================================================
+range() {
+if [ $# -eq 2 ]
+then
+	local set1
+	local count1
+	count1=$1
+	set1=$count1
+	for ((count1=$[ $1+1 ];count1<=$2;count1++))
+	{
+		set1="$set1 $count1"
+	}
+	echo "$set1"
+elif [ $# -eq 1 ]
+then
+	local set2
+	local count2
+	set2=0
+	for ((count2=1;count2<=$1;count2++))
+	{
+		set2="$set2 $count2"
+	}
+	echo "$set2"
+else
+	echo "参数错误"
+fi
+}
+#=============================列出目录文件并且返回一个shell数组==================================================================
+listdir(){
+file_name_list=()
+local count=0
+OLDIFS=$IFS
+IFS=$'\n'
+temp_file="$(mktemp -t listdirXXXX)"
+if [ -f /list_file_name.py ] && [ -x /list_file_name.py ]
+then
+	/list_file_name.py > $temp_file
+	for i in $(cat $temp_file)
+	do
+		file_name_list[$count]="$i"
+		count=$[ $count+1 ]
+	done
+else
+	echo "There is no /list_file_name.py file to create tempfile!!!"
+fi
+IFS=$OLDIFS
+}
+#echo $IFS | hexdump -C 用于查看IFS变量
+#=================================================================================================================================
