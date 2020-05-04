@@ -3,6 +3,10 @@
 import requests,os,re,time
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.by import By 
+from selenium.webdriver.support.ui import WebDriverWait 
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException,NoSuchElementException 
 
 
 
@@ -20,6 +24,16 @@ def jump_to_obtain_imglink(url):					#输入post超链接，并进入，搜索�
 	broswer.execute_script("window.open()")
 	broswer.switch_to.window(broswer.window_handles[1])
 	broswer.get(url)
+	while True:
+		try:
+			wait=WebDriverWait(broswer,5)
+			element=wait.until(EC.presence_of_element_located((By.XPATH,'//div[@class="images"]/img')))
+			break
+		except TimeoutException:
+			print("请等待")
+			
+	 
+	#time.sleep(3)
 	html=broswer.page_source
 	broswer.close()
 	broswer.switch_to.window(broswer.window_handles[0])
@@ -50,10 +64,11 @@ broswer.get("https://passport.bilibili.com/login")
 
 print("Please longin __ if you have done Please imput \"1\"")
 
-s=input()																#确认是否已经登陆成功
-broswer.get("https://space.bilibili.com/36163672/favlist?fid=albumfav")
+s=input()
+if s=="1":
+    broswer.get("https://space.bilibili.com/16021397/album")
 
-print("Please clear the window--if you have clean it ,Please input 1")  #清理当前页面提示
+print("Please clear the window--if you have clean it ,Please input 1")
 input()
 thispagelink=[]
 namelist=os.listdir()
