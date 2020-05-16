@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException,NoSuchElementException 
-
+ss=0
 
 
 def findpost(bs4):									#找到当前页面的post标签超链接，并返回一个超链接列表
@@ -66,7 +66,7 @@ print("Please longin __ if you have done Please imput \"1\"")
 
 s=input()
 if s=="1":
-    broswer.get("https://space.bilibili.com/16021397/album")
+    broswer.get("https://space.bilibili.com/36163672/favlist?fid=albumfav")
 
 print("Please clear the window--if you have clean it ,Please input 1")
 input()
@@ -84,13 +84,19 @@ while True:
 		for j in i:
 			if j.split("/")[-1] in namelist:
 				print("这个文件已经下载过了！！")
+				ss+=1
 			else:
 				print("这个文件是第一次下载")
 				os.system("wget "+j)
+				ss=0
+	if ss>20:
+		break	
 	thispagelink=[]
 	if next_page()==1:
 		print("Jump to next page!!!")
 		print("*"*191)
 	else:
 		print("There is no next page")
-		break			
+		break
+
+broswer.quit()			
