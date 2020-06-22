@@ -33,7 +33,7 @@ then
 	echo $1
         filename=$(echo "$1" | sed 's/.rar//')
         mkdir "$filename"
-        rar x  "$2" ./"$filename"
+        rar x  "$1" ./"$filename"
 	cd "$filename"
         zip -r "$filename".zip ./*
         mv ../"$1" .
@@ -47,7 +47,7 @@ then
         7z x  "$1" ./"$filename"
         cd "$filename"
         zip -r "$filename".zip ./*
-        mv ../"$2" .
+        mv ../"$1" .
 fi
 echo "four"
 
