@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException,NoSuchElementException 
-
+ss=0
 
 
 def findpost(bs4):									#找到当前页面的post标签超链接，并返回一个超链接列表
@@ -60,7 +60,13 @@ def next_page():												#检查是否存在下一页按钮并click。要注�
 
 #main
 broswer=webdriver.Chrome()
-broswer.get("https://passport.bilibili.com/login")
+#broswer.get("https://passport.bilibili.com/login")
+
+#print("Please longin __ if you have done Please imput \"1\"")
+
+#s=input()
+#if s=="1":
+broswer.get("https://space.bilibili.com/162145289/album")
 while True:
 	try:
 		wait=WebDriverWait(broswer,3)
@@ -68,8 +74,8 @@ while True:
 		break
 	except TimeoutException:
 		print("请稍等")
-
-
+#print("Please clear the window--if you have clean it ,Please input 1")
+#input()
 thispagelink=[]
 namelist=os.listdir()
 
@@ -84,13 +90,19 @@ while True:
 		for j in i:
 			if j.split("/")[-1] in namelist:
 				print("这个文件已经下载过了！！")
+				ss+=1
 			else:
 				print("这个文件是第一次下载")
 				os.system("wget "+j)
+				ss=0
+	if ss>10:
+		break	
 	thispagelink=[]
 	if next_page()==1:
 		print("Jump to next page!!!")
 		print("*"*191)
 	else:
 		print("There is no next page")
-		break			
+		break
+
+broswer.quit()			
