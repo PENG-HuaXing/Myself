@@ -30,12 +30,14 @@ class Scrapt_page:
                 post_name.append(i.div.a.string)
             except AttributeError:
                 break
+        print("post href抓取完成")
         return [post_name,post_url]
     def get_img(self):
         img_url=[]
         temp_ele=self.bs4_data.find("article",attrs={"class":"article___1nKEd"}).find_all("img")
         for i in temp_ele:
             img_url.append(base64.b64decode(i['src'].split("/")[-1]).decode('utf-8').replace(".thumb.jpg",""))
+        print("img src抓取完成")
         return img_url
             
 
@@ -55,36 +57,44 @@ def download(url_list,directory_name):
     else:
         os.mkdir(directory_name+"_page"+str(start_page))
         os.chdir(directory_name+"_page"+str(start_page))
+        print("创建"+directory_name+"文件夹")
         for i in url_list:
             os.system("axel "+i)
         os.chdir("../")
 
-def wait_img_OK(page_url):
+def wait_img_OK(page_url,winnum):
     while True:
         try:
-            browser.get(papge_url)
-            wait=WebDriverWait(browser,10)
+            browser.get(page_url)
+            wait=WebDriverWait(browser,130)
+            print("窗口"+str(winnum)+"等待130S"+"\n"+page_url)
             wait.until(EC.presence_of_element_located((By.XPATH,"//article/div/p/img")))
+            print("已经找到对应元素")
             break
         except TimeoutException:
+
+            print("窗口"+str(winnum)+"重新加载"+"\n"+page_url)
+            browser.switch_to.window(browser.window_handles[winnum])
             browser.refresh()
-            print("重新加载")
     return BeautifulSoup(browser.page_source,"lxml")
 
-def wait_post_OK(papge_url):
+def wait_post_OK(page_url):
     while True:
         try:
-            browser.get(papge_url)
-            wait=WebDriverWait(browser,10)
+            browser.get(page_url)
+            wait=WebDriverWait(browser,130)
+            print("等待130S\n"+page_url)
             wait.until(EC.presence_of_element_located((By.XPATH,"//div[@class='container___1F7xE']/div/div/div/div/a")))
+            print("已经找到对应元素")
             break
         except TimeoutException:
+            print("重新加载\n"+page_url)
             browser.refresh()
-            print("重新加载")
+            
     return BeautifulSoup(browser.page_source,"lxml")
 
 #======================================main==============================================================
-
+browser=webdriver.Chrome()
 
 #=====================================开启多个窗口进行tag页面加载======================================
 for i in range(windows_num-1):
@@ -93,12 +103,13 @@ for i in range(windows_num-1):
 
 for i in range(start_page,end_page+1):
     browser.switch_to.window(browser.window_handles[0])
-    post_bs4=wait_post_OK(post_url+"?page"+str(start_page))
+    post_bs4=wait_post_OK(posturl+"?page="+str(start_page))
     sc=Scrapt_page(post_bs4)
     Na_url_list=sc.get_post()
 
 #========================================================================================================
-    while True
+    while True:
+        print("抓取到的tag数目为："+str(len(Na_url_list[0])))
 #==========================================判断剩余tag的数目，决定后续线程数目=======================================================
         if len(Na_url_list[0]) > windows_num:
             tag_num=windows_num
@@ -107,18 +118,25 @@ for i in range(start_page,end_page+1):
 #===========================================================开启多线程===============================
         thread_list=[]
         for i in range(tag_num):
+            print("切换到窗口"+str(i))
             browser.switch_to.window(browser.window_handles[i])
-            thread_list.append(target=wait_img_OK,args=[Na_url_list[1][i]])
+            thread_list.append(threading.Thread(target=wait_img_OK,args=[Na_url_list[1][i],i]))
+            print("第"+str(i)+"线程开始")
             thread_list[i].start()
 #=================================================判断线程存活数目===========================================
         while True:
             alive_num=0
-            for i in range(tag_num)：
+            for i in range(tag_num):
+                time.sleep(5)
                 if thread_list[i].isAlive():
+                    print("第"+str(i)+"线程存活")
                     alive_num=alive_num+1
                 else:
+                    print("第"+str(i)+"线程over")
                     alive_num=alive_num+0
-            if alive_num=0:
+
+            if alive_num==0:
+                print("全部线程结束")
                 break
 
         for i in range(tag_num):
