@@ -10,7 +10,7 @@ baseurl="https://girlimg.epio.app"
 posturl="https://girlimg.epio.app/article"
 start_page=1
 end_page=7
-partten=re.compile(r"(xiuren|bololi|原来是茜公举殿下|少女映画|小鸟酱|新蔻|rosi)",re.I)
+partten=re.compile(r"(xiuren|bololi|公举殿下|rosi)",re.I)
 windows_num=6
 thread_list=[]
 
@@ -58,10 +58,6 @@ def download(url_list,directory_name):
         os.mkdir(directory_name+"_page"+str(start_page))
         os.chdir(directory_name+"_page"+str(start_page))
         print("创建"+directory_name+"文件夹")
-        ff=open("url.log","w")
-        for i in url_list:
-            ff.write(i+"\n")
-        ff.close()
         for i in url_list:
             os.system("axel "+i)
         os.chdir("../")
@@ -167,11 +163,6 @@ for i in range(start_page,end_page+1):
         for i in range(tag_num):
             Na_url_list[0].remove(Na_url_list[0][0])
             Na_url_list[1].remove(Na_url_list[1][0])
-        
-#        file_temp=open(str(len(Na_url_list[0])),"w")
-#        for i in Na_url_list[0]:
-#            file_temp.write(i+"\n")
-#        file_temp.close()
 
         if len(Na_url_list[0])==0:
             break
