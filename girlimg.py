@@ -9,8 +9,8 @@ from selenium.common.exceptions import TimeoutException,NoSuchElementException
 baseurl="https://girlimg.epio.app"
 posturl="https://girlimg.epio.app/article"
 start_page=1
-end_page=7
-partten=re.compile(r"(xiuren|bololi|原来是茜公举殿下|少女映画|小鸟酱|新蔻|rosi)",re.I)
+end_page=17
+partten=re.compile(r"(xiuren|mygirl|bololi|原来是茜公举殿下|少女映画|小鸟酱|新蔻|rosi)",re.I)
 windows_num=6
 thread_list=[]
 
@@ -107,7 +107,7 @@ for i in range(windows_num-1):
 
 for i in range(start_page,end_page+1):
     browser.switch_to.window(browser.window_handles[0])
-    post_bs4=wait_post_OK(posturl+"?page="+str(start_page))
+    post_bs4=wait_post_OK(posturl+"?page="+str(i))
     sc=Scrapt_page(post_bs4)
     Na_url_list=sc.get_post()
 #=================================================写入文件=========================================
@@ -154,7 +154,12 @@ for i in range(start_page,end_page+1):
 
         for i in range(tag_num):
             browser.switch_to.window(browser.window_handles[i])
-            bs4_data=BeautifulSoup(browser.page_source,'lxml')
+            while True:
+                try:
+                    bs4_data=BeautifulSoup(browser.page_source,'lxml')
+                    break
+                except TimeoutException:
+                    browser.refresh()
             sc_img=Scrapt_page(bs4_data)
             img_url_list=sc_img.get_img()
 #==========================================================================================================
@@ -174,6 +179,7 @@ for i in range(start_page,end_page+1):
 #        file_temp.close()
 
         if len(Na_url_list[0])==0:
+            start_page=start_page+1
             break
             
 
