@@ -106,7 +106,11 @@ for i in range(start_page,end_page+1):
     post_bs4=wait_post_OK(posturl+"?page="+str(start_page))
     sc=Scrapt_page(post_bs4)
     Na_url_list=sc.get_post()
-
+#=================================================写入文件=========================================
+    log_file=open("log_"+str(start_page),"a")
+    for i in range(len(Na_url_list[0])):
+        log_file.write(Na_url_list[0][i]+"\t\t"+Na_url_list[1][i]+"\n")
+    log_file.close()
 #========================================================================================================
     while True:
         print("抓取到的tag数目为："+str(len(Na_url_list[0])))
@@ -114,7 +118,7 @@ for i in range(start_page,end_page+1):
         if len(Na_url_list[0]) > windows_num:
             tag_num=windows_num
         else:
-            tag_num=len(Na_url_list)
+            tag_num=len(Na_url_list[0])
 #===========================================================开启多线程===============================
         thread_list=[]
         for i in range(tag_num):
@@ -140,11 +144,23 @@ for i in range(start_page,end_page+1):
                 break
 
         for i in range(tag_num):
+            ff=open("fuck.log","a")
+            ff.write("windows"+str(i)+"\t"+Na_url_list[0][i]+"\t"+Na_url_list[1][i]+"\n")
+            ff.close()
+
+        for i in range(tag_num):
             browser.switch_to.window(browser.window_handles[i])
             bs4_data=BeautifulSoup(browser.page_source,'lxml')
             sc_img=Scrapt_page(bs4_data)
             img_url_list=sc_img.get_img()
+#==========================================================================================================
+#            info_file=open("url","w")
+#            info_file.write(browser.current_url)
+#            info_file.close()
+#=========================================================================================================
             download(img_url_list,Na_url_list[0][i])
+#========================================删除已经完成的post=================================================
+        for i in range(tag_num):
             Na_url_list[0].remove(Na_url_list[0][i])
             Na_url_list[1].remove(Na_url_list[1][i])
         if len(Na_url_list[0])==0:
