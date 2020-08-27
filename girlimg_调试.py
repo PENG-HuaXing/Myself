@@ -8,9 +8,9 @@ from selenium.common.exceptions import TimeoutException,NoSuchElementException
 
 baseurl="https://girlimg.epio.app"
 posturl="https://girlimg.epio.app/article"
-start_page=64
+start_page=46
 end_page=100
-partten=re.compile(r"(xiuren|Graphis|mfstar|mygirl|bololi|原来是茜公举殿下|少女映画|小鸟酱|新蔻|PDL|rosi|wanimal)",re.I)
+partten=re.compile(r"(xiuren|mygirl|bololi|原来是茜公举殿下|少女映画|小鸟酱|新蔻|rosi)",re.I)
 windows_num=5
 thread_list=[]
 
@@ -53,7 +53,7 @@ class Scrapt_page:
 
 def download(url_list,directory_name):
     directory_name=directory_name.replace("/","_")                          #有的文件名称存在反斜杠，系统无法识别
-    reg_filename=directory_name.replace("[","\[").replace("]","\]").replace("(","\(").replace(")","\)").replace("+","\+")              #有的文件名字中存在中括号，需要转移后进行正则表达匹配
+    reg_filename=directory_name.replace("[","\[").replace("]","\]").replace("(","\(").replace(")","\)")              #有的文件名字中存在中括号，需要转移后进行正则表达匹配
     dir_count=0
     dirlist=os.listdir()
     for i in dirlist:                                                   
@@ -70,12 +70,12 @@ def download(url_list,directory_name):
         os.mkdir(directory_name+"_page"+str(start_page))
         os.chdir(directory_name+"_page"+str(start_page))
         print("创建"+directory_name+"文件夹")
-        ff=open("url.log.jpg","w")
+        ff=open("url.log","w")
         for i in url_list:
             ff.write(i+"\n")
         ff.close()
         for i in url_list:
-            os.system("axel -a -n 8 "+i)
+            os.system("axel "+i)
         os.chdir("../")
 
 def wait_img_OK(page_url,winnum):
