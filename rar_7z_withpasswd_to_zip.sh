@@ -21,7 +21,7 @@ if [ $# -eq 2 ] && [ -n "$(echo "$2" | grep '7z$')" ]
 then
         filename=$(echo "$2" | sed 's/.7z//')
         mkdir "$filename"
-        7z x -p"$1" $2 ./"$filename"
+        7z x -p"$1" $2 -o./"$filename"
 	cd "$filename"
         zip -r "$filename".zip ./*
         mv ../"$2" .
@@ -36,18 +36,26 @@ then
         rar x  "$1" ./"$filename"
 	cd "$filename"
         zip -r "$filename".zip ./*
-        mv ../"$1" .
+	mv "$filename".zip ..
+        trash ../"$1"
+	cd ..
+	trash "$filename"
 fi
+
 echo "three"
 
 if [ $# -eq 1 ] && [ -n "$(echo "$1" | grep '7z$')" ]
 then
         filename=$(echo "$1" | sed 's/.7z//')
         mkdir "$filename"
-        7z x  "$1" ./"$filename"
+        7z x  "$1" -o./"$filename"
         cd "$filename"
         zip -r "$filename".zip ./*
-        mv ../"$1" .
+	mv "$filename".zip ..
+        trash ../"$1"
+	cd ..
+	trash "$filename"
+
 fi
 echo "four"
 
